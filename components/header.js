@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { UserNav } from "@/components/user-nav"
 import { Button } from "@/components/ui/button"
 import { Home, BarChart3, DollarSign, Settings } from "lucide-react"
@@ -16,22 +15,21 @@ export function Header() {
             <span className="text-xl font-bold">Expense Tracker</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link href="/dashboard" className="flex items-center space-x-1 hover:text-[oklch(0.65_0.25_123.1)]">
+            <Link href="/dashboard" className="flex items-center space-x-1 hover:text-primary">
               <Home className="h-4 w-4" />
               <span>Dashboard</span>
             </Link>
-            <Link href="/expenses" className="flex items-center space-x-1 hover:text-[oklch(0.65_0.25_123.1)]">
+            <Link href="/expenses" className="flex items-center space-x-1 hover:text-primary">
               <BarChart3 className="h-4 w-4" />
               <span>Expenses</span>
             </Link>
-            <Link href="/summary" className="flex items-center space-x-1 hover:text-[oklch(0.65_0.25_123.1)]">
+            <Link href="/summary" className="flex items-center space-x-1 hover:text-primary">
               <BarChart3 className="h-4 w-4" />
               <span>Summary</span>
             </Link>
           </nav>
         </div>
         <div className="ml-auto flex items-center space-x-4">
-          <ThemeToggle />
           <UserNav />
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, LogOut, Settings, Sun, Moon } from "lucide-react"
+import { User, LogOut, Settings } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -21,7 +21,6 @@ export function UserNav() {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
-  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     fetchUser()
@@ -82,19 +81,6 @@ export function UserNav() {
             </p>
           </div>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Sun className="mr-2 h-4 w-4" />
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Moon className="mr-2 h-4 w-4" />
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <User className="mr-2 h-4 w-4" />
-          System
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/settings")}>
           <Settings className="mr-2 h-4 w-4" />

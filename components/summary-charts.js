@@ -117,17 +117,17 @@ export function SummaryCharts({ refreshKey = 0 }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+        <Card className="bg-primary">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-black">
               Total Expenses
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-black">
               ${data.totalAmount.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-black/70">
               Current month
             </p>
           </CardContent>
@@ -139,7 +139,7 @@ export function SummaryCharts({ refreshKey = 0 }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-4xl font-bold text-primary">
               {data.expenseCount}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -149,7 +149,34 @@ export function SummaryCharts({ refreshKey = 0 }) {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Daily Expenses</CardTitle>
+            <CardDescription>
+              Expenses over the current month
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={data.dailyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="amount" 
+                  stroke="oklch(0.9307 0.2283 123.1)" 
+                  strokeWidth={2}
+                  name="Daily Total"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Expenses by Category</CardTitle>
@@ -176,33 +203,6 @@ export function SummaryCharts({ refreshKey = 0 }) {
                 </Pie>
                 <Tooltip formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} />
               </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Expenses</CardTitle>
-            <CardDescription>
-              Expenses over the current month
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.dailyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="amount" 
-                  stroke="oklch(0.65 0.25 123.1)" 
-                  strokeWidth={2}
-                  name="Daily Total"
-                />
-              </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
