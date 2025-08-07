@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# --- Supabase CLI / Docker (if you use them) ---
+.supabase
+docker-compose.override.yml
+
+# --- OS / Editor Junk ---
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.idea
+
+# --- Testing & Coverage ---
+coverage
+.nyc_output
+*.lcov
