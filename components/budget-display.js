@@ -297,9 +297,10 @@ export function BudgetDisplay({ refreshKey = 0, onBudgetUpdated }) {
             onClick={startEditing} 
             variant="ghost" 
             size="sm" 
-            className="h-8 px-2"
+            className="h-8 px-2 text-xs"
           >
-            <Edit className="h-3 w-3" />
+            <Edit className="h-3 w-3 mr-1" />
+            Edit Budget
           </Button>
         </div>
       </CardHeader>
