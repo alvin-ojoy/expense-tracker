@@ -2,11 +2,25 @@
 
 import { useState, useEffect } from "react"
 import { format } from "date-fns"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { TrendingUp } from "lucide-react"
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 import { createClient } from "@/lib/supabase/client"
 import { Skeleton } from "@/components/ui/skeleton"
-import { TrendingUp } from "lucide-react"
-import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts"
 
 export function BudgetDisplay({ refreshKey = 0 }) {
   const [budget, setBudget] = useState(null)
@@ -54,96 +68,151 @@ export function BudgetDisplay({ refreshKey = 0 }) {
     }
   }
 
-  if (loading) {
-    return <Skeleton className="h-64 w-full" />
+  const chartConfig = {
+    spent: {
+      label: "Spent",
+      color: "#e5e7eb",
+    },
+    remaining: {
+      label: "Remaining",
+      color: "oklch(0.9307 0.2283 123.1)",
+    },
+    overBudget: {
+      label: "Over Budget",
+      color: "#ef4444",
+    },
   }
 
   const percentage = budget ? Math.min((currentSpending / budget.amount) * 100, 100) : 0
   const remaining = budget ? budget.amount - currentSpending : 0
   const isOverBudget = budget && currentSpending > budget.amount
 
-  const radialData = budget ? [
-    {
-      name: "Spent",
-      value: currentSpending,
-      fill: isOverBudget ? "#ef4444" : "oklch(0.9307 0.2283 123.1)",
-    },
-    {
-      name: "Remaining",
-      value: Math.max(remaining, 0),
-      fill: "#e5e7eb",
-    }
-  ] : []
+  const chartData = budget ? [{
+    month: format(new Date(), 'MMM yyyy'),
+    spent: isOverBudget ? budget.amount : currentSpending,
+    remaining: isOverBudget ? 0 : Math.max(remaining, 0),
+    overBudget: isOverBudget ? currentSpending - budget.amount : 0,
+  }] : []
 
-  return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-sm font-medium">Monthly Budget</CardTitle>
-            <CardDescription>{format(new Date(), 'MMMM yyyy')}</CardDescription>
-          </div>
-          {budget && (
-            <div className={`text-sm font-medium ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
-              {percentage.toFixed(0)}%
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        {budget ? (
-          <div className="flex items-center space-x-4">
-            <div className="flex-1">
-              <ResponsiveContainer width="100%" height={120}>
-                <RadialBarChart
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="40%"
-                  outerRadius="100%"
-                  data={radialData}
-                  startAngle={90}
-                  endAngle={450}
-                >
-                  <RadialBar
-                    dataKey="value"
-                    background
-                    fill={isOverBudget ? "#ef4444" : "oklch(0.9307 0.2283 123.1)"}
-                    cornerRadius={10}
-                  />
-                </RadialBarChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="flex-1 space-y-1">
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Spent</span>
-                  <span className={`font-bold ${isOverBudget ? 'text-red-600' : ''}`}>
-                    ${currentSpending.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Budget</span>
-                  <span className="font-bold">${budget.amount.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {isOverBudget ? 'Over' : 'Remaining'}
-                  </span>
-                  <span className={`font-bold ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
-                    ${Math.abs(remaining).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
+  const total = budget ? budget.amount : 0
+  const actualTotal = budget ? currentSpending : 0
+
+  if (!budget) {
+    return (
+      <Card className="flex flex-col">
+        <CardHeader className="items-center pb-0">
+          <CardTitle className="text-sm font-medium">Monthly Budget</CardTitle>
+          <CardDescription>{format(new Date(), 'MMMM yyyy')}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-1 items-center justify-center pb-0">
           <div className="text-center text-muted-foreground py-8">
             <TrendingUp className="mx-auto h-8 w-8 mb-2 opacity-50" />
             <p className="text-sm">No budget set for this month</p>
           </div>
-        )}
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle className="text-sm font-medium">Monthly Budget</CardTitle>
+        <CardDescription>{format(new Date(), 'MMMM yyyy')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-1 items-center pb-0">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square w-full max-w-[200px]"
+        >
+          <RadialBarChart
+            data={chartData}
+            endAngle={180}
+            innerRadius={60}
+            outerRadius={100}
+          >
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) - 16}
+                          className="fill-foreground text-2xl font-bold"
+                        >
+                          ${actualTotal.toFixed(0)}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 4}
+                          className="fill-muted-foreground"
+                        >
+                          of ${total.toFixed(0)}
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
+              />
+            </PolarRadiusAxis>
+            
+            <RadialBar
+              dataKey="spent"
+              stackId="a"
+              cornerRadius={5}
+              fill="var(--color-spent)"
+              className="stroke-transparent stroke-2"
+            />
+            <RadialBar
+              dataKey="remaining"
+              stackId="a"
+              cornerRadius={5}
+              fill="var(--color-remaining)"
+              className="stroke-transparent stroke-2"
+            />
+            
+            {isOverBudget && (
+              <RadialBar
+                dataKey="overBudget"
+                stackId="a"
+                cornerRadius={5}
+                fill="var(--color-overBudget)"
+                className="stroke-transparent stroke-2"
+              />
+            )}
+          </RadialBarChart>
+        </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 leading-none font-medium">
+          {isOverBudget ? (
+            <>
+              Over budget by ${(currentSpending - budget.amount).toFixed(2)}
+            </>
+          ) : (
+            <>
+              {Math.round(percentage)}% of budget used
+            </>
+          )}
+        </div>
+        <div className="text-muted-foreground leading-none">
+          {isOverBudget ? (
+            <>
+              ${(budget.amount - currentSpending).toFixed(2)} over budget
+            </>
+          ) : (
+            <>
+              ${remaining.toFixed(2)} remaining this month
+            </>
+          )}
+        </div>
+      </CardFooter>
     </Card>
   )
 }
