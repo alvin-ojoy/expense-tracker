@@ -120,7 +120,7 @@ export default function LandingPage() {
             <span className="text-xl font-bold">Expense Tracker</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2024 Expense Tracker. All rights reserved.
+            © 2025 Expense Tracker. All rights reserved.
           </p>
         </div>
       </footer>
