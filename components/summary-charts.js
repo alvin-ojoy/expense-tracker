@@ -163,7 +163,17 @@ export function SummaryCharts({ refreshKey = 0 }) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} />
+                <Tooltip 
+                  formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} 
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(0.9307 0.2283 123.1)', 
+                    border: 'none', 
+                    borderRadius: '0.375rem',
+                    color: 'black'
+                  }}
+                  labelStyle={{ color: 'black' }}
+                  itemStyle={{ color: 'black' }}
+                />
                 <Legend />
                 <Line 
                   type="monotone" 
@@ -201,7 +211,17 @@ export function SummaryCharts({ refreshKey = 0 }) {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} />
+                <Tooltip 
+                  formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} 
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(0.9307 0.2283 123.1)', 
+                    border: 'none', 
+                    borderRadius: '0.375rem',
+                    color: 'black'
+                  }}
+                  labelStyle={{ color: 'black' }}
+                  itemStyle={{ color: 'black' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
