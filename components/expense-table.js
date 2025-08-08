@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { ExpenseForm } from "@/components/expense-form"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export function ExpenseTable() {
+export function ExpenseTable({ onExpenseChange }) {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -33,15 +33,11 @@ export function ExpenseTable() {
         return
       }
 
-      console.log("Fetching expenses for user:", user.id)
-
       const { data, error } = await supabase
         .from("expenses")
         .select("*")
         .eq("user_id", user.id)
         .order("spent_at", { ascending: false })
-
-      console.log("Expenses fetched:", data, "Error:", error)
 
       if (error) {
         console.error("Error fetching expenses:", error)
@@ -50,6 +46,10 @@ export function ExpenseTable() {
       }
       
       setExpenses(data || [])
+      
+      if (onExpenseChange) {
+        onExpenseChange()
+      }
     } catch (error) {
       console.error("Error fetching expenses:", error)
       toast.error("An unexpected error occurred")
