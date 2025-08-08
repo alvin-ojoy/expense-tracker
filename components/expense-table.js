@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { format } from "date-fns"
-import { Trash2 } from "lucide-react"
+import { Trash2, ChevronLeft, ChevronRight } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -22,6 +22,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 8
   const router = useRouter()
   const supabase = createClient()
 
@@ -71,6 +73,23 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
     fetchExpenses()
   }, [refreshKey])
 
+  const totalPages = Math.ceil(expenses.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentExpenses = expenses.slice(startIndex, endIndex)
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-2">
@@ -100,14 +119,14 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenses.length === 0 ? (
+          {currentExpenses.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center">
                 No expenses found
               </TableCell>
             </TableRow>
           ) : (
-            expenses.map((expense) => (
+            currentExpenses.map((expense) => (
               <TableRow key={expense.id}>
                 <TableCell>{format(new Date(expense.spent_at), "MMM dd, yyyy")}</TableCell>
                 <TableCell>{expense.description}</TableCell>
@@ -134,6 +153,37 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
           )}
         </TableBody>
       </Table>
+      
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t">
+          <div className="text-sm text-muted-foreground">
+            Showing {startIndex + 1}-{Math.min(endIndex, expenses.length)} of {expenses.length} expenses
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <span className="text-sm font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

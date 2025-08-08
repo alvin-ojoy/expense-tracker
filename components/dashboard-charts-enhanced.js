@@ -24,23 +24,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, TrendingDown, DollarSign, Target, Activity } from "lucide-react"
 
+// NEW GREEN COLOR SCHEME
+// Using oklch(0.9307 0.2283 123.1) as primary
+// To revert, use values from dashboard-colors-backup.js
+
 const ROBINHOOD_COLORS = {
-  primary: "#00C805",
-  light: "#66E085",
-  dark: "#00A505",
+  primary: "oklch(0.9307 0.2283 123.1)",
+  light: "oklch(0.8507 0.2083 123.1)",
+  dark: "oklch(0.7707 0.1883 123.1)",
   accent: "#1E1E1E",
   background: "#FFFFFF",
   muted: "#F5F5F5"
 }
 
 const PIE_COLORS = [
-  "#00C805", // Robinhood green
-  "#66E085", // Light green
-  "#98FB98", // Pale green
-  "#90EE90", // Light green
-  "#32CD32", // Lime green
-  "#228B22", // Forest green
-  "#006400", // Dark green
+  "oklch(0.9307 0.2283 123.1)", // Primary green
+  "oklch(0.8507 0.2083 123.1)", // Darker green
+  "oklch(0.7707 0.1883 123.1)", // Medium green
+  "oklch(0.6907 0.1683 123.1)", // Darker green
+  "oklch(0.6107 0.1483 123.1)", // Even darker green
+  "oklch(0.5307 0.1283 123.1)", // Dark green
+  "oklch(0.4507 0.1083 123.1)", // Very dark green
 ]
 
 export function DashboardChartsEnhanced({ refreshKey = 0 }) {
@@ -212,18 +216,18 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
     <div className="space-y-6">
       {/* Key Metrics Cards */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-l-4 border-l-[#00C805]">
+        <Card className="border-l-4 border-l-white bg-[oklch(0.9307_0.2283_123.1)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-[#00C805]" />
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-black">
+              <DollarSign className="h-4 w-4 text-black" />
               Total Expenses
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#00C805]">
+            <div className="text-2xl font-bold text-black">
               ${data.totalAmount.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-black/80">
               This month • {data.expenseCount} transactions
             </p>
           </CardContent>
@@ -238,7 +242,7 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-[#00A505]">
+              <div className="text-2xl font-bold" style={{ color: ROBINHOOD_COLORS.dark }}>
                 ${data.budgetAmount.toFixed(2)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -256,7 +260,7 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#66E085]">
+            <div className="text-2xl font-bold" style={{ color: ROBINHOOD_COLORS.light }}>
               ${(data.dailyData.reduce((sum, d) => sum + d.amount, 0) / new Date().getDate() || 0).toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -331,7 +335,7 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
                 <Area
                   type="monotone"
                   dataKey="amount"
-                  stroke="#00C805"
+                  stroke={ROBINHOOD_COLORS.primary}
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorSpending)"
@@ -420,7 +424,7 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
                 />
                 <Bar 
                   dataKey="amount" 
-                  fill="#00C805" 
+                  fill={ROBINHOOD_COLORS.primary} 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
