@@ -159,10 +159,17 @@ export function SummaryCharts({ refreshKey = 0 }) {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.dailyData}>
+              <LineChart data={data.dailyData} margin={{ left: 0, right: 0, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis 
+                  dataKey="date" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={40}
+                  interval="preserveStartEnd"
+                  tick={{ fontSize: 10 }}
+                />
+                <YAxis width={35} tick={{ fontSize: 10 }} />
                 <Tooltip 
                   formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]} 
                   contentStyle={{ 
