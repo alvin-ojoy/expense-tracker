@@ -28,9 +28,9 @@ export default function DashboardPage() {
       
       <div className="grid gap-6">
         <div className="grid gap-6 md:grid-cols-2">
-          <DashboardAddExpense onSuccess={handleExpenseAdded} />
+          <BudgetDisplay refreshKey={refreshKey} />
           <div className="space-y-6">
-            <BudgetDisplay refreshKey={refreshKey} />
+            <DashboardAddExpense onSuccess={handleExpenseAdded} />
             <BudgetForm onSuccess={handleBudgetUpdated} />
           </div>
         </div>

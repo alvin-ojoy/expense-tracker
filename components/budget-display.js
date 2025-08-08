@@ -127,9 +127,10 @@ export function BudgetDisplay({ refreshKey = 0 }) {
         >
           <RadialBarChart
             data={chartData}
-            endAngle={180}
-            innerRadius={60}
-            outerRadius={100}
+            startAngle={-30}
+            endAngle={210}
+            innerRadius={80}
+            outerRadius={120}
           >
             <ChartTooltip
               cursor={false}
@@ -143,14 +144,14 @@ export function BudgetDisplay({ refreshKey = 0 }) {
                       <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
                         <tspan
                           x={viewBox.cx}
-                          y={(viewBox.cy || 0) - 16}
+                          y={(viewBox.cy || 0) + 4}
                           className="fill-foreground text-2xl font-bold"
                         >
-                          ${actualTotal.toFixed(0)}
+                          ${remaining.toFixed(2)}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 4}
+                          y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
                           of ${total.toFixed(0)}
