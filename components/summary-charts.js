@@ -181,6 +181,7 @@ export function SummaryCharts({ refreshKey = 0 }) {
                   stroke="oklch(0.9307 0.2283 123.1)" 
                   strokeWidth={2}
                   name="Daily Total"
+                  dot={false}
                 />
               </LineChart>
             </ResponsiveContainer>
