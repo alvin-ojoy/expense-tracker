@@ -7,7 +7,9 @@
       "Bash(rm:*)",
       "Bash(npx:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run start)"
+      "Bash(npm run start)",
+      "Bash(touch:*)",
+      "Bash(npm run lint:*)"
     ],
     "deny": []
   }

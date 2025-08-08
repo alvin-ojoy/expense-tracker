@@ -35,10 +35,10 @@ export function Header() {
               <BarChart3 className="h-4 w-4" />
               <span>Expenses</span>
             </Link>
-            <Link href="/summary" className="flex items-center space-x-1 hover:text-primary"
+            <Link href="/budget" className="flex items-center space-x-1 hover:text-primary"
             >
               <BarChart3 className="h-4 w-4" />
-              <span>Summary</span>
+              <span>Budget</span>
             </Link>
           </nav>
         </div>
@@ -79,12 +79,12 @@ export function Header() {
                 Expenses
               </Button>
             </Link>
-            <Link href="/summary" className="block" onClick={closeMenu}
+            <Link href="/budget" className="block" onClick={closeMenu}
             >
               <Button variant="ghost" className="w-full justify-start"
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Summary
+                Budget
               </Button>
             </Link>
           </div>

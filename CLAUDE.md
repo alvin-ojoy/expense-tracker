@@ -41,14 +41,18 @@ npm run test:watch   # Run tests in watch mode
 ### Database Schema
 - `/supabase/migrations/` - Database migrations
 - `/supabase/config.toml` - Supabase configuration
-- Primary table: `expenses` with columns:
-  - `id` (uuid, primary key)
-  - `user_id` (uuid, foreign key to auth.users)
-  - `amount` (numeric)
-  - `category` (text)
-  - `description` (text)
-  - `date` (date)
-  - `created_at` (timestamp)
+
+**Tables:**
+- **expenses** (uuid, user_id, amount, description, category, spent_at, created_at, updated_at)
+- **budgets** (uuid, user_id, month, amount, created_at, updated_at)
+
+**RLS Policies:**
+- Users can only access their own expenses and budgets
+- Full CRUD permissions for authenticated users on their data
+
+**Indexes:**
+- `idx_expenses_user_spent` on (user_id, spent_at desc)
+- `idx_budgets_user_month` on (user_id, month)
 
 ### App Structure
 ```
