@@ -11,6 +11,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"
 
 export function SummaryCharts({ refreshKey = 0 }) {
   const [data, setData] = useState(null)
+  const [budgetData, setBudgetData] = useState(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -26,6 +27,7 @@ export function SummaryCharts({ refreshKey = 0 }) {
       const start = startOfMonth(new Date())
       const end = endOfMonth(new Date())
 
+      // Fetch expenses
       const { data: expenses } = await supabase
         .from("expenses")
         .select("*")
@@ -33,7 +35,16 @@ export function SummaryCharts({ refreshKey = 0 }) {
         .gte("spent_at", start.toISOString())
         .lte("spent_at", end.toISOString())
 
-      processData(expenses || [])
+      // Fetch budget
+      const currentMonth = new Date().toISOString().slice(0, 7) + '-01'
+      const { data: budget } = await supabase
+        .from("budgets")
+        .select("amount")
+        .eq("user_id", user.id)
+        .eq("month", currentMonth)
+        .single()
+
+      processData(expenses || [], budget)
       setLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -41,7 +52,7 @@ export function SummaryCharts({ refreshKey = 0 }) {
     }
   }
 
-  function processData(expenses) {
+  function processData(expenses, budget) {
     // Category data for pie chart
     const categoryTotals = expenses.reduce((acc, expense) => {
       acc[expense.category] = (acc[expense.category] || 0) + expense.amount
@@ -83,6 +94,7 @@ export function SummaryCharts({ refreshKey = 0 }) {
       totalAmount,
       expenseCount: expenses.length,
     })
+    setBudgetData(budget)
   }
 
   if (loading) {
@@ -132,6 +144,23 @@ export function SummaryCharts({ refreshKey = 0 }) {
             </p>
           </CardContent>
         </Card>
+        {budgetData && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium">
+                Budget
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                ${budgetData.amount.toFixed(2)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Monthly budget
+              </p>
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">
@@ -147,6 +176,24 @@ export function SummaryCharts({ refreshKey = 0 }) {
             </p>
           </CardContent>
         </Card>
+        {budgetData && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium">
+                Budget Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${data.totalAmount > budgetData.amount ? 'text-red-600' : 'text-green-600'}`}>
+                {data.totalAmount > budgetData.amount ? 'Over' : 'Within'}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {Math.abs(((data.totalAmount / budgetData.amount) * 100) - 100).toFixed(1)}%
+                {data.totalAmount > budgetData.amount ? ' over' : ' under'}
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="space-y-6">

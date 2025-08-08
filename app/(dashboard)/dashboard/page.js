@@ -3,11 +3,17 @@
 import { useState } from "react"
 import { DashboardOverview } from "@/components/summary-charts"
 import { DashboardAddExpense } from "@/components/dashboard-add-expense"
+import { BudgetForm } from "@/components/budget-form"
+import { BudgetDisplay } from "@/components/budget-display"
 
 export default function DashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleExpenseAdded = () => {
+    setRefreshKey(prev => prev + 1)
+  }
+
+  const handleBudgetUpdated = () => {
     setRefreshKey(prev => prev + 1)
   }
 
@@ -21,7 +27,13 @@ export default function DashboardPage() {
       </div>
       
       <div className="grid gap-6">
-        <DashboardAddExpense onSuccess={handleExpenseAdded} />
+        <div className="grid gap-6 md:grid-cols-2">
+          <DashboardAddExpense onSuccess={handleExpenseAdded} />
+          <div className="space-y-6">
+            <BudgetDisplay refreshKey={refreshKey} />
+            <BudgetForm onSuccess={handleBudgetUpdated} />
+          </div>
+        </div>
         <DashboardOverview refreshKey={refreshKey} />
       </div>
     </div>
