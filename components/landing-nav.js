@@ -8,6 +8,10 @@ import { DollarSign, Menu, X } from "lucide-react"
 export function LandingNav() {
   const [isOpen, setIsOpen] = useState(false)
 
+  const closeMenu = () => {
+    setIsOpen(false)
+  }
+
   return (
     <header className="border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4">
@@ -42,12 +46,12 @@ export function LandingNav() {
       {isOpen && (
         <div className="md:hidden border-t bg-background">
           <div className="px-4 py-3 space-y-3">
-            <Link href="/login" className="block">
+            <Link href="/login" className="block" onClick={closeMenu}>
               <Button variant="ghost" className="w-full justify-start">
                 Login
               </Button>
             </Link>
-            <Link href="/signup" className="block">
+            <Link href="/signup" className="block" onClick={closeMenu}>
               <Button className="w-full">
                 Sign Up
               </Button>

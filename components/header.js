@@ -9,6 +9,10 @@ import { Home, BarChart3, DollarSign, Settings, Menu, X } from "lucide-react"
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
+  const closeMenu = () => {
+    setIsOpen(false)
+  }
+
   return (
     <header className="border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4">
@@ -59,7 +63,7 @@ export function Header() {
       {isOpen && (
         <div className="md:hidden border-t bg-background">
           <div className="px-4 py-3 space-y-3">
-            <Link href="/dashboard" className="block"
+            <Link href="/dashboard" className="block" onClick={closeMenu}
             >
               <Button variant="ghost" className="w-full justify-start"
               >
@@ -67,7 +71,7 @@ export function Header() {
                 Dashboard
               </Button>
             </Link>
-            <Link href="/expenses" className="block"
+            <Link href="/expenses" className="block" onClick={closeMenu}
             >
               <Button variant="ghost" className="w-full justify-start"
               >
@@ -75,7 +79,7 @@ export function Header() {
                 Expenses
               </Button>
             </Link>
-            <Link href="/summary" className="block"
+            <Link href="/summary" className="block" onClick={closeMenu}
             >
               <Button variant="ghost" className="w-full justify-start"
               >
