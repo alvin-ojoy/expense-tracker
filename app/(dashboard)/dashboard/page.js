@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardOverview } from "@/components/summary-charts"
+import { DashboardOverview } from "@/components/dashboard-charts-enhanced"
 import { DashboardAddExpense } from "@/components/dashboard-add-expense"
 import { BudgetForm } from "@/components/budget-form"
 import { BudgetDisplay } from "@/components/budget-display"

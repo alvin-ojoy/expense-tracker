@@ -26,7 +26,7 @@ export default function ExpensesPage() {
       
       <div className="space-y-8">
         <ExpenseAnalytics refreshKey={refreshKey} />
-        <ExpenseTable onExpenseChange={handleExpenseAdded} />
+        <ExpenseTable refreshKey={refreshKey} onExpenseChange={handleExpenseAdded} />
       </div>
     </div>
   )

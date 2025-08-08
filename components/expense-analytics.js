@@ -68,10 +68,24 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
   const [analytics, setAnalytics] = useState(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const [lastRefresh, setLastRefresh] = useState(0)
 
   useEffect(() => {
     fetchExpenseAnalytics()
-  }, [currentMonth, refreshKey])
+  }, [currentMonth])
+
+  // Only refresh when explicitly triggered, not on every key change
+  useEffect(() => {
+    if (refreshKey > 0 && refreshKey !== lastRefresh) {
+      // Add small delay to prevent rapid updates
+      const timer = setTimeout(() => {
+        fetchExpenseAnalytics()
+        setLastRefresh(refreshKey)
+      }, 500)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [refreshKey, lastRefresh])
 
   async function fetchExpenseAnalytics() {
     try {
@@ -299,13 +313,70 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
         </Card>
       </div>
 
-      <Tabs defaultValue="patterns" className="space-y-4">
+      <Tabs defaultValue="insights" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="insights">Insights</TabsTrigger>
           <TabsTrigger value="patterns">Daily Patterns</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="time">Time Analysis</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="insights" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Spending Insights</CardTitle>
+                <CardDescription>AI-powered insights</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {analytics.topCategory && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl">{analytics.topCategory.emoji}</span>
+                      <span className="text-sm">Top spender: {analytics.topCategory.category}</span>
+                    </div>
+                    <Badge variant="outline">${analytics.topCategory.amount.toFixed(2)}</Badge>
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Target className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Daily average</span>
+                  </div>
+                  <Badge variant="outline">${analytics.avgDaily.toFixed(2)}</Badge>
+                </div>
+
+                {analytics.largeExpenses.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm text-yellow-600">{analytics.largeExpenses.length} large expense{analytics.largeExpenses.length > 1 ? 's' : ''}</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Achievements</CardTitle>
+                <CardDescription>Monthly milestones</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Award className="h-5 w-5 text-yellow-500" />
+                  <span className="text-sm">{analytics.expenseCount} transactions tracked</span>
+                </div>
+                
+                {analytics.trendChange < 0 && (
+                  <div className="flex items-center space-x-2">
+                    <TrendingDown className="h-5 w-5 text-green-500" />
+                    <span className="text-sm">Spending decreased {Math.abs(analytics.trendChange).toFixed(1)}%</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         <TabsContent value="patterns" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -424,63 +495,6 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="insights" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Spending Insights</CardTitle>
-                <CardDescription>AI-powered insights</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {analytics.topCategory && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">{analytics.topCategory.emoji}</span>
-                      <span className="text-sm">Top spender: {analytics.topCategory.category}</span>
-                    </div>
-                    <Badge variant="outline">${analytics.topCategory.amount.toFixed(2)}</Badge>
-                  </div>
-                )}
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Target className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Daily average</span>
-                  </div>
-                  <Badge variant="outline">${analytics.avgDaily.toFixed(2)}</Badge>
-                </div>
-
-                {analytics.largeExpenses.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm text-yellow-600">{analytics.largeExpenses.length} large expense{analytics.largeExpenses.length > 1 ? 's' : ''}</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Achievements</CardTitle>
-                <CardDescription>Monthly milestones</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Award className="h-5 w-5 text-yellow-500" />
-                  <span className="text-sm">{analytics.expenseCount} transactions tracked</span>
-                </div>
-                
-                {analytics.trendChange < 0 && (
-                  <div className="flex items-center space-x-2">
-                    <TrendingDown className="h-5 w-5 text-green-500" />
-                    <span className="text-sm">Spending decreased {Math.abs(analytics.trendChange).toFixed(1)}%</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
       </Tabs>
     </div>

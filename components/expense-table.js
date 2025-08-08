@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { ExpenseForm } from "@/components/expense-form"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export function ExpenseTable({ onExpenseChange }) {
+export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -69,7 +69,7 @@ export function ExpenseTable({ onExpenseChange }) {
 
   useEffect(() => {
     fetchExpenses()
-  }, [])
+  }, [refreshKey])
 
   if (loading) {
     return (
