@@ -7,7 +7,16 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D", "#FFC0CB", "#A52A2A"]
+const COLORS = [
+  "oklch(0.9307 0.2283 123.1)",           // Primary green
+  "oklch(0.8507 0.2083 123.1)",           // Slightly darker green
+  "oklch(0.7707 0.1883 123.1)",           // Medium green
+  "oklch(0.6907 0.1683 123.1)",           // Darker green
+  "oklch(0.6107 0.1483 123.1)",           // Even darker green
+  "oklch(0.5307 0.1283 123.1)",           // Dark green
+  "oklch(0.4507 0.1083 123.1)",           // Very dark green
+  "oklch(0.3707 0.0883 123.1)",           // Darkest green
+]
 
 export function SummaryCharts({ refreshKey = 0 }) {
   const [data, setData] = useState(null)
