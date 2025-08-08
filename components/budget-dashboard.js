@@ -377,7 +377,7 @@ export function BudgetDashboard() {
           <CardContent className="flex items-center space-x-2 p-4">
             <AlertCircle className="h-5 w-5 text-red-600" />
             <p className="text-sm text-red-800">
-              Warning: You've used {budgetProgress.toFixed(1)}% of your monthly budget!
+              Warning: You&apos;ve used {budgetProgress.toFixed(1)}% of your monthly budget!
             </p>
           </CardContent>
         </Card>
