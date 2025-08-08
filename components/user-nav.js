@@ -40,7 +40,7 @@ export function UserNav() {
   async function handleSignOut() {
     try {
       await supabase.auth.signOut()
-      router.push("/login")
+      router.push("/")
       router.refresh()
     } catch (error) {
       console.error("Error signing out:", error)
