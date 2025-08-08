@@ -21,7 +21,8 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  Line
+  Line,
+  Legend
 } from "recharts"
 import { 
   DollarSign, 
@@ -314,11 +315,11 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
       </div>
 
       <Tabs defaultValue="insights" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="insights">Insights</TabsTrigger>
-          <TabsTrigger value="patterns">Daily Patterns</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="time">Time Analysis</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+          <TabsTrigger value="insights" className="text-xs sm:text-sm">Insights</TabsTrigger>
+          <TabsTrigger value="patterns" className="text-xs sm:text-sm">Daily Patterns</TabsTrigger>
+          <TabsTrigger value="categories" className="text-xs sm:text-sm">Categories</TabsTrigger>
+          <TabsTrigger value="time" className="text-xs sm:text-sm">Time Analysis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="insights" className="space-y-4">
@@ -430,23 +431,29 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
                 <CardDescription>Spending by category</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
+                <div className="h-64 sm:h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                    <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                       <Pie
                         data={analytics.categoryData}
                         cx="50%"
                         cy="50%"
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="amount"
+                        outerRadius={60}
+                        labelLine={false}
                         label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
+                        dataKey="amount"
                       >
                         {analytics.categoryData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={NEON_COLORS[index % NEON_COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                      <Legend 
+                        wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                        layout="horizontal" 
+                        verticalAlign="bottom" 
+                        align="center"
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>

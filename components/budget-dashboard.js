@@ -246,10 +246,10 @@ export function BudgetDashboard() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="breakdown">Category Breakdown</TabsTrigger>
-          <TabsTrigger value="trends">Trends</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 gap-1">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+          <TabsTrigger value="breakdown" className="text-xs sm:text-sm">Breakdown</TabsTrigger>
+          <TabsTrigger value="trends" className="text-xs sm:text-sm">Trends</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
