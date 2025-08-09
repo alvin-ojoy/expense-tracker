@@ -14,7 +14,7 @@ export default function LandingPage() {
           <div className="mb-8 flex justify-center">
             <div className="flex items-center space-x-2">
               <DollarSign className="h-12 w-12 text-primary" />
-              <span className="text-4xl font-bold">Expense Tracker</span>
+              <span className="text-4xl font-bold">Expenses Tracker</span>
             </div>
           </div>
           
@@ -24,7 +24,7 @@ export default function LandingPage() {
           </h1>
           
           <p className="mb-8 text-xl text-muted-foreground">
-            Take control of your finances with our intuitive expense tracking platform. 
+            Take control of your finances with our intuitive expenses tracking platform. 
             Monitor spending, analyze patterns, and make informed financial decisions.
           </p>
           
@@ -48,7 +48,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-12 text-center text-3xl font-bold">
-              Why Choose Expense Tracker?
+              Why Choose Expenses Tracker?
             </h2>
             
             <div className="grid gap-8 md:grid-cols-3">
@@ -84,7 +84,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="mb-2 text-xl font-semibold">Lightning Fast</h3>
                 <p className="text-muted-foreground">
-                  Quick and easy expense entry with real-time updates and syncing
+                  Quick and easy expenses entry with real-time updates and syncing
                 </p>
               </div>
             </div>
@@ -117,10 +117,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <DollarSign className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Expense Tracker</span>
+            <span className="text-xl font-bold">Expenses Tracker</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2025 Expense Tracker. All rights reserved.
+            © 2025 Expenses Tracker. All rights reserved.
           </p>
         </div>
       </footer>

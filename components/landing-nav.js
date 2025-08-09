@@ -17,7 +17,7 @@ export function LandingNav() {
       <div className="flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
           <DollarSign className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">Expense Tracker</span>
+          <span className="text-xl font-bold">Expenses Tracker</span>
         </Link>
         
         {/* Desktop Navigation */}

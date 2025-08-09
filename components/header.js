@@ -24,7 +24,7 @@ export const Header = memo(function Header() {
         <div className="flex items-center space-x-4">
           <Link href="/dashboard" className="flex items-center space-x-2">
             <DollarSign className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Expense Tracker</span>
+            <span className="text-xl font-bold">Expenses Tracker</span>
           </Link>
           
           {/* Desktop Navigation */}
