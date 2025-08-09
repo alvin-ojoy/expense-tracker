@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, eachDayOfInterval } from "date-fns"
 import { 
   BarChart, 
@@ -70,23 +70,6 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
   const [lastRefresh, setLastRefresh] = useState(0)
-
-  useEffect(() => {
-    fetchExpenseAnalytics()
-  }, [currentMonth, fetchExpenseAnalytics])
-
-  // Only refresh when explicitly triggered, not on every key change
-  useEffect(() => {
-    if (refreshKey > 0 && refreshKey !== lastRefresh) {
-      // Add small delay to prevent rapid updates
-      const timer = setTimeout(() => {
-        fetchExpenseAnalytics()
-        setLastRefresh(refreshKey)
-      }, 500)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [refreshKey, lastRefresh, fetchExpenseAnalytics])
 
   const fetchExpenseAnalytics = useCallback(async () => {
     try {
@@ -210,6 +193,23 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
       setLoading(false)
     }
   }, [currentMonth, supabase])
+
+  useEffect(() => {
+    fetchExpenseAnalytics()
+  }, [currentMonth, fetchExpenseAnalytics])
+
+  // Only refresh when explicitly triggered, not on every key change
+  useEffect(() => {
+    if (refreshKey > 0 && refreshKey !== lastRefresh) {
+      // Add small delay to prevent rapid updates
+      const timer = setTimeout(() => {
+        fetchExpenseAnalytics()
+        setLastRefresh(refreshKey)
+      }, 500)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [refreshKey, lastRefresh, fetchExpenseAnalytics])
 
   const navigateMonth = (direction) => {
     setCurrentMonth(prev => 

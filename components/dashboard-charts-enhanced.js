@@ -52,7 +52,18 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
   const [budgetData, setBudgetData] = useState(null)
   const [trendData, setTrendData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
   const supabase = createClient()
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const fetchData = useCallback(async () => {
     try {
@@ -219,7 +230,7 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
   return (
     <div className="space-y-6">
       {/* Key Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-white bg-[oklch(0.9307_0.2283_123.1)]">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-black">
@@ -297,7 +308,7 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Enhanced Area Chart */}
         <Card className="overflow-hidden">
           <CardHeader>
@@ -362,12 +373,13 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
                   data={data.categoryData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={isMobile ? 40 : 60}
+                  outerRadius={isMobile ? 75 : 100}
                   paddingAngle={2}
                   dataKey="value"
-                  label={({ name, percentage }) => `${name} ${percentage}%`}
-                  labelLine={false}
+                  label={({ name, percentage }) => isMobile ? `${percentage}%` : `${name} ${percentage}%`}
+                  labelLine={!isMobile}
+                  labelStyle={{ fontSize: isMobile ? 10 : 12 }}
                 >
                   {data.categoryData.map((entry, index) => (
                     <Cell 
@@ -379,7 +391,7 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]}
+                  formatter={(value, name) => [`$${value.toFixed(2)}`, name]}
                   contentStyle={{
                     backgroundColor: '#fff',
                     border: '1px solid #e0e0e0',
@@ -389,7 +401,10 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
                 />
                 <Legend 
                   iconType="circle"
-                  wrapperStyle={{ paddingTop: '20px' }}
+                  wrapperStyle={{ 
+                    paddingTop: isMobile ? '10px' : '20px',
+                    fontSize: isMobile ? '11px' : '12px'
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -398,7 +413,7 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
       </div>
 
       {/* Additional Insights */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Weekly Trend</CardTitle>
@@ -447,11 +462,11 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
                 <RadialBarChart 
                   cx="50%" 
                   cy="50%" 
-                  innerRadius="60%" 
-                  outerRadius="90%" 
+                  innerRadius="50%" 
+                  outerRadius="80%" 
                   data={[
                     {
-                      name: 'Spent',
+                      name: 'Budget Used',
                       value: Math.min(data.budgetProgress.percentage, 100),
                       fill: data.budgetProgress.percentage > 100 ? '#ef4444' : '#00C805'
                     }
@@ -460,18 +475,27 @@ export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ r
                   endAngle={-270}
                 >
                   <RadialBar
-                    background
+                    background={{ fill: '#f0f0f0' }}
                     dataKey="value"
-                    cornerRadius={10}
+                    cornerRadius={8}
                   />
                   <text 
                     x="50%" 
-                    y="50%" 
+                    y="40%" 
                     textAnchor="middle" 
                     dominantBaseline="middle" 
-                    className="text-lg font-bold fill-current"
+                    className="text-sm sm:text-lg font-bold fill-current"
                   >
                     {data.budgetProgress.percentage.toFixed(0)}%
+                  </text>
+                  <text 
+                    x="50%" 
+                    y="58%" 
+                    textAnchor="middle" 
+                    dominantBaseline="middle" 
+                    className="text-xs fill-muted-foreground"
+                  >
+                    {data.budgetProgress.percentage > 100 ? 'Over Budget' : 'Budget Used'}
                   </text>
                 </RadialBarChart>
               </ResponsiveContainer>
