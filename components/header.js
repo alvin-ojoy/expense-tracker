@@ -1,12 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, memo } from "react"
 import Link from "next/link"
-import { UserNav } from "@/components/user-nav"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
-import { Home, BarChart3, DollarSign, Settings, Menu, X } from "lucide-react"
+import { Home, BarChart3, DollarSign, Menu, X } from "lucide-react"
 
-export function Header() {
+const UserNav = dynamic(() => import("@/components/user-nav").then(mod => mod.UserNav), {
+  loading: () => <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />,
+  ssr: false
+})
+
+export const Header = memo(function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   const closeMenu = () => {
@@ -92,4 +97,6 @@ export function Header() {
       )}
     </header>
   )
-}
+})
+
+Header.displayName = "Header"

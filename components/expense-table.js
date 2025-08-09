@@ -19,7 +19,9 @@ import { Badge } from "@/components/ui/badge"
 import { ExpenseForm } from "@/components/expense-form"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
+import { memo, useMemo, useCallback } from "react"
+
+export const ExpenseTable = memo(function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -27,7 +29,7 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
   const router = useRouter()
   const supabase = createClient()
 
-  async function fetchExpenses() {
+  const fetchExpenses = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
@@ -58,37 +60,41 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase, onExpenseChange])
 
-  async function deleteExpense(id) {
+  const deleteExpense = useCallback(async (id) => {
     try {
       await supabase.from("expenses").delete().eq("id", id)
       fetchExpenses()
     } catch (error) {
       console.error("Error deleting expense:", error)
     }
-  }
+  }, [supabase, fetchExpenses])
 
   useEffect(() => {
     fetchExpenses()
-  }, [refreshKey])
+  }, [refreshKey, fetchExpenses])
 
   const totalPages = Math.ceil(expenses.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentExpenses = expenses.slice(startIndex, endIndex)
+  
+  const currentExpenses = useMemo(() => 
+    expenses.slice(startIndex, endIndex), 
+    [expenses, startIndex, endIndex]
+  )
 
-  const goToNextPage = () => {
+  const goToNextPage = useCallback(() => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1)
     }
-  }
+  }, [currentPage, totalPages])
 
-  const goToPreviousPage = () => {
+  const goToPreviousPage = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
     }
-  }
+  }, [currentPage])
 
   if (loading) {
     return (
@@ -186,4 +192,6 @@ export function ExpenseTable({ onExpenseChange, refreshKey = 0 }) {
       )}
     </div>
   )
-}
+})
+
+ExpenseTable.displayName = "ExpenseTable"

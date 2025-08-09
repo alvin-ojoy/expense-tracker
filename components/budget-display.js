@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { format } from "date-fns"
 import { TrendingUp, Plus, Edit, Trash2 } from "lucide-react"
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
@@ -34,11 +34,7 @@ export function BudgetDisplay({ refreshKey = 0, onBudgetUpdated }) {
   const [budgetAmount, setBudgetAmount] = useState("")
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchBudgetData()
-  }, [refreshKey])
-
-  async function fetchBudgetData() {
+  const fetchBudgetData = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -72,7 +68,11 @@ export function BudgetDisplay({ refreshKey = 0, onBudgetUpdated }) {
       console.error("Error fetching budget data:", error)
       setLoading(false)
     }
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    fetchBudgetData()
+  }, [refreshKey, fetchBudgetData])
 
   const chartConfig = {
     spent: {

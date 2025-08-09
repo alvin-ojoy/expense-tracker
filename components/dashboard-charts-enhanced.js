@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, memo } from "react"
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, subDays } from "date-fns"
 import { 
   AreaChart, 
@@ -47,22 +47,21 @@ const PIE_COLORS = [
   "oklch(0.4507 0.1083 123.1)", // Very dark green
 ]
 
-export function DashboardChartsEnhanced({ refreshKey = 0 }) {
+export const DashboardChartsEnhanced = memo(function DashboardChartsEnhanced({ refreshKey = 0 }) {
   const [data, setData] = useState(null)
   const [budgetData, setBudgetData] = useState(null)
   const [trendData, setTrendData] = useState(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchData()
-  }, [refreshKey])
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) {
+        setLoading(false)
+        return
+      }
 
       const start = startOfMonth(new Date())
       const end = endOfMonth(new Date())
@@ -93,14 +92,19 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
         .gte("spent_at", weekStart.toISOString())
 
       processData(expenses || [], budget, weekExpenses || [])
+      setBudgetData(budget)
       setLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)
       setLoading(false)
     }
-  }
+  }, [supabase])
 
-  function processData(expenses, budget, weekExpenses) {
+  useEffect(() => {
+    fetchData()
+  }, [refreshKey, fetchData])
+
+  const processData = useCallback((expenses, budget, weekExpenses) => {
     // Enhanced category data with percentages
     const categoryTotals = expenses.reduce((acc, expense) => {
       acc[expense.category] = (acc[expense.category] || 0) + expense.amount
@@ -181,7 +185,7 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
       budgetAmount: budget?.amount || 0
     })
     setBudgetData(budget)
-  }
+  }, [])
 
   if (loading) {
     return (
@@ -496,8 +500,12 @@ export function DashboardChartsEnhanced({ refreshKey = 0 }) {
       </div>
     </div>
   )
-}
+})
 
-export function DashboardOverview({ refreshKey = 0 }) {
+DashboardChartsEnhanced.displayName = "DashboardChartsEnhanced"
+
+export const DashboardOverview = memo(function DashboardOverview({ refreshKey = 0 }) {
   return <DashboardChartsEnhanced refreshKey={refreshKey} />
-}
+})
+
+DashboardOverview.displayName = "DashboardOverview"

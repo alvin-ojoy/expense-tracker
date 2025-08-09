@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }) {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto py-6 px-4">{children}</main>
-      <Toaster />
+      <Toaster position="top-right" />
     </div>
   )
 }

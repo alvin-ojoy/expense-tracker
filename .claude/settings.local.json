@@ -9,7 +9,11 @@
       "Bash(npm run build:*)",
       "Bash(npm run start)",
       "Bash(touch:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm install)"
     ],
     "deny": []
   }

@@ -35,7 +35,7 @@ export function ResetPasswordForm() {
     }
     
     checkSession()
-  }, [])
+  }, [supabase, router])
 
   const handleResetPassword = async (e) => {
     e.preventDefault()

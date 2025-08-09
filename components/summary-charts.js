@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns"
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts"
 import { createClient } from "@/lib/supabase/client"
+import { getExpenses, getBudget } from "@/lib/supabase/cache"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -24,42 +25,39 @@ export function SummaryCharts({ refreshKey = 0 }) {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchData()
-  }, [refreshKey])
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
+      // Get current user from Supabase auth
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
       const start = startOfMonth(new Date())
       const end = endOfMonth(new Date())
-
-      // Fetch expenses
-      const { data: expenses } = await supabase
-        .from("expenses")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("spent_at", start.toISOString())
-        .lte("spent_at", end.toISOString())
-
-      // Fetch budget
       const currentMonth = new Date().toISOString().slice(0, 7) + '-01'
-      const { data: budget } = await supabase
-        .from("budgets")
-        .select("amount")
-        .eq("user_id", user.id)
-        .eq("month", currentMonth)
-        .single()
 
-      processData(expenses || [], budget)
+      // Parallel fetching with optimized queries
+      const [expensesResult, budgetResult] = await Promise.all([
+        getExpenses(user.id, start.toISOString(), end.toISOString()),
+        getBudget(user.id, currentMonth)
+      ])
+
+      if (expensesResult.error) {
+        console.error("Error fetching expenses:", expensesResult.error)
+        setLoading(false)
+        return
+      }
+
+      processData(expensesResult.data || [], budgetResult.data?.[0])
       setLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)
       setLoading(false)
     }
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    fetchData()
+  }, [refreshKey, fetchData])
 
   function processData(expenses, budget) {
     // Category data for pie chart

@@ -1,4 +1,18 @@
-import { BudgetDashboard } from "@/components/budget-dashboard"
+"use client"
+
+import { Suspense } from 'react'
+import dynamic from 'next/dynamic'
+import { Skeleton } from "@/components/ui/skeleton"
+
+const BudgetDashboard = dynamic(() => import("@/components/budget-dashboard").then(mod => ({ default: mod.BudgetDashboard })), {
+  loading: () => (
+    <div className="space-y-4">
+      <Skeleton className="h-[200px] w-full" />
+      <Skeleton className="h-[300px] w-full" />
+      <Skeleton className="h-[250px] w-full" />
+    </div>
+  )
+})
 
 export default function BudgetPage() {
   return (
@@ -11,7 +25,15 @@ export default function BudgetPage() {
           </p>
         </div>
       </div>
-      <BudgetDashboard />
+      <Suspense fallback={
+        <div className="space-y-4">
+          <Skeleton className="h-[200px] w-full" />
+          <Skeleton className="h-[300px] w-full" />
+          <Skeleton className="h-[250px] w-full" />
+        </div>
+      }>
+        <BudgetDashboard />
+      </Suspense>
     </div>
   )
 }

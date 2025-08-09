@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,9 +21,9 @@ export default function SettingsPage() {
 
   useEffect(() => {
     fetchUser()
-  }, [])
+  }, [fetchUser])
 
-  async function fetchUser() {
+  const fetchUser = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -33,7 +33,7 @@ export default function SettingsPage() {
     } catch (error) {
       console.error("Error fetching user:", error)
     }
-  }
+  }, [supabase])
 
   async function handleEmailChange(e) {
     e.preventDefault()

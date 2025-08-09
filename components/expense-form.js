@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, memo, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -64,7 +64,7 @@ const CATEGORIES = [
   "Other",
 ]
 
-export function ExpenseForm({ expense, onSuccess }) {
+export const ExpenseForm = memo(function ExpenseForm({ expense, onSuccess }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -79,7 +79,7 @@ export function ExpenseForm({ expense, onSuccess }) {
     },
   })
 
-  async function onSubmit(values) {
+  const onSubmit = useCallback(async (values) => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
@@ -95,8 +95,6 @@ export function ExpenseForm({ expense, onSuccess }) {
         user_id: user.id,
       }
 
-      console.log("Saving expense:", expenseData)
-
       let result
       if (expense) {
         result = await supabase
@@ -106,8 +104,6 @@ export function ExpenseForm({ expense, onSuccess }) {
       } else {
         result = await supabase.from("expenses").insert(expenseData)
       }
-
-      console.log("Supabase result:", result)
 
       if (result.error) {
         console.error("Supabase error:", result.error)
@@ -124,7 +120,7 @@ export function ExpenseForm({ expense, onSuccess }) {
       console.error("Error saving expense:", error)
       toast.error(`Failed to save expense: ${error.message}`)
     }
-  }
+  }, [supabase, form, expense, onSuccess, router])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -239,4 +235,6 @@ export function ExpenseForm({ expense, onSuccess }) {
       </DialogContent>
     </Dialog>
   )
-}
+})
+
+ExpenseForm.displayName = "ExpenseForm"

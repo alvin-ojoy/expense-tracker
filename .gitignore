@@ -61,3 +61,4 @@ coverage
 *.lcov
 
 /Supabase-email-template
+/.claude

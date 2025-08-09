@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { format, startOfMonth, endOfMonth, subMonths, addMonths } from "date-fns"
 import { 
   PieChart, 
@@ -58,11 +58,7 @@ export function BudgetDashboard() {
 
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchBudgetData()
-  }, [currentMonth, refreshKey])
-
-  async function fetchBudgetData() {
+  const fetchBudgetData = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -119,7 +115,11 @@ export function BudgetDashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentMonth, supabase])
+
+  useEffect(() => {
+    fetchBudgetData()
+  }, [currentMonth, refreshKey, fetchBudgetData])
 
   const totalSpent = expenseData?.reduce((sum, expense) => sum + parseFloat(expense.amount), 0) || 0
   const budgetAmount = budgetData?.amount || 0

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { User, LogOut, Settings } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -24,9 +24,9 @@ export function UserNav() {
 
   useEffect(() => {
     fetchUser()
-  }, [])
+  }, [supabase, router])
 
-  async function fetchUser() {
+  const fetchUser = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
@@ -35,9 +35,9 @@ export function UserNav() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
-  async function handleSignOut() {
+  const handleSignOut = useCallback(async () => {
     try {
       await supabase.auth.signOut()
       router.push("/")
@@ -45,7 +45,7 @@ export function UserNav() {
     } catch (error) {
       console.error("Error signing out:", error)
     }
-  }
+  }, [supabase, router])
 
   if (loading) {
     return <Skeleton className="h-8 w-8 rounded-full" />

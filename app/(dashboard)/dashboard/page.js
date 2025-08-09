@@ -1,10 +1,30 @@
 "use client"
 
-import { useState } from "react"
-import { DashboardOverview } from "@/components/dashboard-charts-enhanced"
-import { DashboardAddExpense } from "@/components/dashboard-add-expense"
-import { BudgetForm } from "@/components/budget-form"
-import { BudgetDisplay } from "@/components/budget-display"
+import { useState, Suspense } from "react"
+import dynamic from 'next/dynamic'
+
+const DashboardOverview = dynamic(() => import("@/components/dashboard-charts-enhanced").then(mod => ({ default: mod.DashboardOverview })), {
+  loading: () => (
+    <div className="space-y-4">
+      <div className="h-[300px] bg-muted rounded-lg animate-pulse" />
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="h-[250px] bg-muted rounded-lg animate-pulse" />
+        <div className="h-[250px] bg-muted rounded-lg animate-pulse" />
+      </div>
+    </div>
+  ),
+  ssr: false
+})
+
+const BudgetDisplay = dynamic(() => import("@/components/budget-display").then(mod => ({ default: mod.BudgetDisplay })), {
+  loading: () => <div className="h-[200px] bg-muted rounded-lg animate-pulse" />,
+  ssr: false
+})
+
+const DashboardAddExpense = dynamic(() => import("@/components/dashboard-add-expense").then(mod => ({ default: mod.DashboardAddExpense })), {
+  loading: () => <div className="h-[200px] bg-muted rounded-lg animate-pulse" />,
+  ssr: false
+})
 
 export default function DashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
@@ -28,12 +48,26 @@ export default function DashboardPage() {
       
       <div className="grid gap-6">
         <div className="grid gap-6 md:grid-cols-2">
-          <BudgetDisplay refreshKey={refreshKey} onBudgetUpdated={handleBudgetUpdated} />
+          <Suspense fallback={<div className="h-[200px] bg-muted rounded-lg animate-pulse" />}>
+            <BudgetDisplay refreshKey={refreshKey} onBudgetUpdated={handleBudgetUpdated} />
+          </Suspense>
           <div className="space-y-6">
-            <DashboardAddExpense onSuccess={handleExpenseAdded} />
+            <Suspense fallback={<div className="h-[200px] bg-muted rounded-lg animate-pulse" />}>
+              <DashboardAddExpense onSuccess={handleExpenseAdded} />
+            </Suspense>
           </div>
         </div>
-        <DashboardOverview refreshKey={refreshKey} />
+        <Suspense fallback={
+          <div className="space-y-4">
+            <div className="h-[300px] bg-muted rounded-lg animate-pulse" />
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="h-[250px] bg-muted rounded-lg animate-pulse" />
+              <div className="h-[250px] bg-muted rounded-lg animate-pulse" />
+            </div>
+          </div>
+        }>
+          <DashboardOverview refreshKey={refreshKey} />
+        </Suspense>
       </div>
     </div>
   )

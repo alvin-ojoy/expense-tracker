@@ -73,7 +73,7 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
 
   useEffect(() => {
     fetchExpenseAnalytics()
-  }, [currentMonth])
+  }, [currentMonth, fetchExpenseAnalytics])
 
   // Only refresh when explicitly triggered, not on every key change
   useEffect(() => {
@@ -86,9 +86,9 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
       
       return () => clearTimeout(timer)
     }
-  }, [refreshKey, lastRefresh])
+  }, [refreshKey, lastRefresh, fetchExpenseAnalytics])
 
-  async function fetchExpenseAnalytics() {
+  const fetchExpenseAnalytics = useCallback(async () => {
     try {
       setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
@@ -209,7 +209,7 @@ export function ExpenseAnalytics({ refreshKey = 0 }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentMonth, supabase])
 
   const navigateMonth = (direction) => {
     setCurrentMonth(prev => 
